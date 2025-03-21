@@ -1,0 +1,9 @@
+numpy 
+matplotlib
+open3d==0.15.2
+glumpy
+pyrender
+imgviz
+pyglet
+opencv-python>=4.5.3.56
+scikit-learn
