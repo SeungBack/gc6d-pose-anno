@@ -522,7 +522,7 @@ class AppWindow:
         refine_position.vertical_padding_em = 0.2
         refine_position.set_on_clicked(self._on_refine)
         self._scene_control.add_child(refine_position)
-        generate_save_annotation = gui.Button("Save Annotation (S)")
+        generate_save_annotation = gui.Button("Save Annotation")
         generate_save_annotation.horizontal_padding_em = 0.8
         generate_save_annotation.vertical_padding_em = 0.2
         generate_save_annotation.set_on_clicked(self._on_generate)

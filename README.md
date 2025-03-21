@@ -1,43 +1,86 @@
-# Object Pose Annotator
+# GraspClutter6D Pose Annotator
 
-<img src="./lib/object_pose_annotator.png" height="400">
+![GraspClutter6D Pose Annotator Interface](./lib/object_pose_annotator.png)
 
+## Overview
 
-# TODO:
-- [X] Show object coordinate
-- [X] Add progressive bar
-- [X] Add smart view controller
-- [X] Move to initial viewpoint
-- [X] Add transparency
-- [X] Show original image
-- [X] Fix camera viewpoint
-- [X] Show mask image
-- [X] Add score visualizer
-- [X] Add world coordinate
-- [X] Show object model images
-- [X] Visualize the key direction
-- [X] Add instance label
-- [X] Add logger
-- [X] Test on window
-- [X] Cx_freeze
+The GraspClutter6D Pose Annotator is a specialized tool designed for:
+- Annotating 6D object poses in datasets that follow the BOP format
+- Monitoring annotation quality using depth difference metrics
+- Copying and pasting annotations across multiple images within the same scene
 
+## Installation
 
-## Install and Run
+```bash
+# Create and activate conda environment
+conda create -n gc6d-anno python=3.7
+conda activate gc6d-anno
 
-In windows, Microsoft Visual C++ 14.0 is required. [link](https://www.microsoft.com/ko-KR/download/details.aspx?id=48159) [link](https://visualstudio.microsoft.com/ko/visual-cpp-build-tools/)
+# Install dependencies
+pip install -r requirements.txt
 
-```
-$ conda create -n gc6d-anno python=3.7
-$ conda activate gc6d-anno
-$ pip install -r requirements.txt
-$ python object_pose_annotator.py
+# Launch the application
+python object_pose_annotator.py
 ```
 
+## User Guide
 
-## 
+### Opening a Scene
+1. Click the **Open File** button in the top-right corner
+2. Navigate to `GraspClutter6D_root/scenes/scene_you_want/rgb/image_you_want`
+3. The point cloud, image, and annotation will automatically load
 
-- `W, A, S, D`: up, left, down, right
-- `Q, W`: zoom-
+### Object Pose Manipulation
+1. Add objects you want to annotate in the 'Annotation Objects' panel
+2. Select the object you wish to annotate
+3. Use the following keyboard shortcuts:
 
-w a s d
-q
+| Key Combination | Action |
+|----------------|--------|
+| `W` | Move object up |
+| `A` | Move object left |
+| `S` | Move object down |
+| `D` | Move object right |
+| `Q` | Move object outward (away from camera) |
+| `E` | Move object inward (toward camera) |
+| `Shift + W/A/S/D/Q/E` | Rotate object with respect to camera coordinate frame |
+
+### Scene Point Cloud Navigation
+- **Left-click + drag**: Rotate viewpoint
+- **Right-click + drag**: Translate viewpoint
+
+### Image Panel Navigation
+| Key | Action |
+|-----|--------|
+| `I` | Move image up |
+| `K` | Move image down |
+| `J` | Move image left |
+| `L` | Move image right |
+| `U` | Zoom in |
+| `O` | Zoom out |
+| `P` | Reset to default view |
+
+### Interface Customization
+- You can adjust the following settings in the right-top panel:
+  - **Responsiveness**: Modify sensitivity for pose orientation control
+  - **Point Size**: Change the size of points in the point cloud visualization
+  - **Transparency**: Adjust the transparency level of rendered objects
+
+
+### Additional Functions
+| Key | Action |
+|-----|--------|
+| `T` | Reset to initial camera viewpoint |
+| `R` | Refine object poses using Iterative Closest Points (ICP) algorithm |
+
+### Cross-Image Annotation
+You can copy object poses across different images within the same scene:
+1. Locate the **Copy Annotation** function in the bottom-right corner
+2. Designate the source image ID (containing the annotation to be copied)
+3. Apply to the target image (where the annotation will be pasted)
+4. The tool uses camera poses and intrinsic parameters to properly align annotations
+
+### Saving and Quality Assessment
+- Annotations are saved to each scene directory in `scene_gt.json` using the BOP format
+- After saving, segmentation masks and annotation quality metrics are automatically updated
+- The `Annotation Quality` panel displays absolute depth differences in millimeters, allowing you to monitor the precision of your annotations
