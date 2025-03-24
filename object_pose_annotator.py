@@ -446,7 +446,7 @@ class AppWindow:
         h = gui.Horiz(0.4 * em)  
         self.image_number_edit = gui.NumberEdit(gui.NumberEdit.INT)
         self.image_number_edit.int_value = 1
-        self.image_number_edit.set_limits(-4, 53) #! todo update this automatically
+        self.image_number_edit.set_limits(-4, 53) #!TODO: update this automatically for BOP dataset
         h.add_child(gui.Label("Image:"))
         h.add_child(self.image_number_edit)
         change_image_button = gui.Button("Change")
@@ -501,8 +501,7 @@ class AppWindow:
 
         progress_ctrls = gui.Vert(em)
         self._progress = gui.ProgressBar()
-        self._progress.value = 0.0  # 25% complete
-                # self._image_number = gui.Label("Image: " + f'{0:06}')
+        self._progress.value = 0.0 
         prog_layout = gui.Vert(em)
         prog_layout.add_child(self._progress)
         self._progress_str = gui.Label("Progress: 0.0% [0/0]")
@@ -710,7 +709,6 @@ class AppWindow:
         filedlg.add_filter("", "All files (*)")
         filedlg.set_on_cancel(self._on_filedlg_cancel)
         filedlg.set_on_done(self._on_filedlg_done)
-        # filedlg.set_path('/aihub/OccludedObjectDataset/DiverseClutter6D/real_backup/rgb')
         self.window.show_dialog(filedlg)
 
 
@@ -741,10 +739,6 @@ class AppWindow:
         self.window.close_dialog()
         self._log.text = "\tLoad a scene to start annotating."
         self.window.set_needs_layout()
-        # except Exception as e:
-        #     print(e)
-        #     self._on_error("잘못된 경로가 입력되었습니다. (error at _on_filedlg_done)")
-        #     self._log.text = "\t올바른 파일 경로를 선택하세요."
 
     def _update_scene_numbers(self):
         self._scene_number.text = "Directory: " + f'{self._annotation_scene.scene_num:06}'
@@ -757,22 +751,13 @@ class AppWindow:
         # translation or rotation
         if x != 0 or y != 0 or z != 0:
             h_transform = np.array([[1, 0, 0, x], [0, 1, 0, y], [0, 0, 1, z], [0, 0, 0, 1]])
-        else:  # elif rx!=0 or ry!=0 or rz!=0:
+        else: 
             center = active_obj.obj_geometry.get_center()
             rot_mat_obj_center = active_obj.obj_geometry.get_rotation_matrix_from_xyz((rx, ry, rz))
             T_neg = np.vstack((np.hstack((np.identity(3), -center.reshape(3, 1))), [0, 0, 0, 1]))
             R = np.vstack((np.hstack((rot_mat_obj_center, [[0], [0], [0]])), [0, 0, 0, 1]))
             T_pos = np.vstack((np.hstack((np.identity(3), center.reshape(3, 1))), [0, 0, 0, 1]))
             h_transform = np.matmul(T_pos, np.matmul(R, T_neg))
-            # center = active_obj.obj_geometry.get_center()
-            # current_rot = active_obj.transform[:3, :3]
-            # rot_vec = rx*current_rot[:, 0] + ry*current_rot[:, 1] + rz*current_rot[:, 2]
-            # r = Rot.from_rotvec(rot_vec)
-            # rot_mat = r.as_matrix()
-            # T_neg = np.vstack((np.hstack((np.identity(3), -center.reshape(3, 1))), [0, 0, 0, 1]))
-            # R = np.vstack((np.hstack((rot_mat, [[0], [0], [0]])), [0, 0, 0, 1]))
-            # T_pos = np.vstack((np.hstack((np.identity(3), center.reshape(3, 1))), [0, 0, 0, 1]))
-            # h_transform = T_pos @ R @ T_neg
             
         active_obj.set_transform(h_transform)
         center = active_obj.obj_geometry.get_center()
@@ -782,8 +767,6 @@ class AppWindow:
                                         add_downsampled_copy_for_fast_rendering=True)
                                     
         # update values stored of object
-        # active_obj.transform = np.matmul(h_transform, active_obj.transform)
-
         if self.settings.show_coord_frame:
             self._add_coord_frame("obj_coord_frame", size=0.1)
             self._add_coord_frame("world_coord_frame")
@@ -858,7 +841,6 @@ class AppWindow:
                 return T
             def rotate(degrees):
                 T = np.eye(3)
-                # just involves some sin() and cos()
                 T[0:2] = cv2.getRotationMatrix2D(center=(0,0), angle=-degrees, scale=1.0)
                 return T
             translate_factor = 10
@@ -889,8 +871,8 @@ class AppWindow:
                 self.scale_factor = 0.1
             if self.scale_factor > 10:
                 self.scale_factor = 10
-            (ow, oh) = (self.W, self.H) # output size
-            (ocx, ocy) = ((ow-1)/2, (oh-1)/2) # put there in output (it's the exact center)
+            (ow, oh) = (self.W, self.H)
+            (ocx, ocy) = ((ow-1)/2, (oh-1)/2)
             H = translate(+ocx, +ocy) @ rotate(degrees=0) @ scale(self.scale_factor) @ translate(-self.icx, -self.icy)
             M = H[0:2]
             
@@ -944,8 +926,6 @@ class AppWindow:
 
     def _on_mouse(self, event):
         
-        # We could override BUTTON_DOWN without a modifier, but that would
-        # interfere with manipulating the scene.
         if event.type == gui.MouseEvent.Type.BUTTON_DOWN and event.is_modifier_down(
                 gui.KeyModifier.ALT):
             try:
@@ -968,19 +948,16 @@ class AppWindow:
                         event.x, event.y, depth, self._scene.frame.width,
                         self._scene.frame.height)
                     target_xyz = np.array(target_xyz)
-                    # self._annotation_changed = True
                     objects = self._annotation_scene.get_objects()
                     active_obj = objects[self._meshes_used.selected_index]
                     h_transform = np.eye(4)
                     h_transform[:3, 3] = target_xyz - active_obj.obj_geometry.get_center()
-                    # active_obj.obj_geometry.transform(h_transform)
                     active_obj.set_transform(h_transform)
                     self._scene.scene.remove_geometry(active_obj.obj_name)
                     self._scene.scene.add_geometry(active_obj.obj_name, active_obj.obj_geometry,
                                                 self.settings.annotation_active_obj_material,
                                                 add_downsampled_copy_for_fast_rendering=True)
                     # update values stored of object
-                    # active_obj.transform = np.matmul(h_transform, active_obj.transform)
                     if self.settings.show_coord_frame:
                         self._add_coord_frame("obj_coord_frame", size=0.1)
                         self._add_coord_frame("world_coord_frame")
@@ -1032,13 +1009,11 @@ class AppWindow:
                                                           o3d.pipelines.registration.ICPConvergenceCriteria(
                                                               max_iteration=50))
         if np.sum(np.abs(reg.transformation[:3, 3])) < 0.25:
-            # active_obj.obj_geometry.transform(reg.transformation)
             active_obj.set_transform(reg.transformation)
             self._scene.scene.remove_geometry(active_obj.obj_name)
             self._scene.scene.add_geometry(active_obj.obj_name, active_obj.obj_geometry,
                                         self.settings.annotation_active_obj_material,
                                         add_downsampled_copy_for_fast_rendering=True)
-            # active_obj.transform = np.matmul(reg.transformation, active_obj.transform)
 
             if self.settings.show_coord_frame:
                 self._add_coord_frame("obj_coord_frame", size=0.1)
@@ -1059,7 +1034,6 @@ class AppWindow:
             return
 
         image_num = self._annotation_scene.image_num
-        # model_names = self.load_model_names()
         json_6d_path = os.path.join(self.scenes.scenes_path, f"{self._annotation_scene.scene_num:06}", 'scene_gt')
 
         if os.path.exists(json_6d_path):
@@ -1207,17 +1181,14 @@ class AppWindow:
         cmap = matplotlib.cm.get_cmap('hsv')
         for i, (obj_name, obj_mask) in enumerate(obj_masks.items()):
             obj_mask = np.where(obj_mask > 125, 255, 0).astype(np.uint8)[..., 0]
-            cv2.imwrite("/home/seung/Workspace/papers/2022/clora/6d-pose-anno-tool/object-pose-annotator/obj_mask.png", obj_mask)
             valid_mask = obj_mask * copy.deepcopy(valid_depth_mask)
             valid_mask = np.array(valid_mask > 0, dtype=bool).astype(np.uint8)
 
-            cv2.imwrite("/home/seung/Workspace/papers/2022/clora/6d-pose-anno-tool/object-pose-annotator/valid_mask.png", valid_mask)
             depth_captured_obj = depth_captured.copy()
             depth_rendered_obj = depth_rendered.copy()
 
             depth_diff = depth_captured_obj - depth_rendered_obj
             inlier_mask = np.abs(np.copy(depth_diff)) < 100
-            # valid_mask = valid_mask * inlier_mask
             depth_diff = depth_diff * valid_mask
             depth_diff_abs = np.abs(np.copy(depth_diff))
             
@@ -1322,7 +1293,7 @@ class AppWindow:
         self._apply_settings()
 
         # update current object visualization
-        if self._annotation_scene is None: # shsh
+        if self._annotation_scene is None: 
             self._on_error("Select the annotation object file. (error at _on_highlight_obj)")
             return
         meshes = self._annotation_scene.get_objects()
@@ -1332,7 +1303,7 @@ class AppWindow:
         self._scene.scene.modify_geometry_material(active_obj.obj_name, self.settings.annotation_active_obj_material)
 
 
-    def _on_transparency(self, transparency): #shsh
+    def _on_transparency(self, transparency): 
         
         self._log.text = "\t Adjusting transparency."
         self.window.set_needs_layout()
@@ -1374,7 +1345,7 @@ class AppWindow:
         dlg = gui.Dialog("About")
         # Add the text
         dlg_layout = gui.Vert(em, gui.Margins(em, em, em, em))
-        dlg_layout.add_child(gui.Label("6D Object Pose Annotator by GIST AILAB.\nCopyright (c) 2022 Seunghyeok Back\nGwangju Institute of Science and Technology (GIST)\nshback@gm.gist.ac.kr"))
+        dlg_layout.add_child(gui.Label("6D Object Pose Annotator by Seunghyeok Back (GIST, KIMM)\nshback@kimm.re.kr"))
         # Add the Ok button. We need to define a callback function to handle
         # the click.
         ok = gui.Button("OK")
@@ -1403,7 +1374,7 @@ class AppWindow:
         return count 
 
     def _add_mesh(self):
-        if self._annotation_scene is None: # shsh
+        if self._annotation_scene is None: 
             self._on_error("Select the file to annotate. (error at _add_mesh)") 
             return
 
@@ -1444,7 +1415,7 @@ class AppWindow:
         self._annotation_changed = True
 
     def _remove_mesh(self):
-        if self._annotation_scene is None: # shsh
+        if self._annotation_scene is None: 
             self._on_error("Select the file to annotate. (error at _remove_mesh)")
             return
         if not self._annotation_scene.get_objects():
@@ -1710,7 +1681,7 @@ class AppWindow:
         self.window.set_needs_layout()
         self.current_image_idx -= 1
         self.scene_load(self.scenes.scenes_path, self._annotation_scene.scene_num, self.image_num_lists[self.current_image_idx])
-        self._progress.value = (self.current_image_idx + 1) / len(self.image_num_lists) # 25% complete
+        self._progress.value = (self.current_image_idx + 1) / len(self.image_num_lists) 
         self._progress_str.text = "Progress: {:.1f}% [{}/{}]".format(
             100 * (self.current_image_idx + 1) / len(self.image_num_lists), 
             self.current_image_idx + 1, len(self.image_num_lists))

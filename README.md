@@ -1,6 +1,6 @@
 # GraspClutter6D Pose Annotator
 
-![GraspClutter6D Pose Annotator Interface](./lib/object_pose_annotator.png)
+![GraspClutter6D Pose Annotator Interface](./example.gif)
 
 ## Overview
 
@@ -44,6 +44,7 @@ python object_pose_annotator.py
 | `Q` | Move object outward (away from camera) |
 | `E` | Move object inward (toward camera) |
 | `Shift + W/A/S/D/Q/E` | Rotate object with respect to camera coordinate frame |
+| `Ctrl + Left-click` | Move the object to the clicked position |
 
 ### Scene Point Cloud Navigation
 - **Left-click + drag**: Rotate viewpoint
