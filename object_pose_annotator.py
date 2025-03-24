@@ -1034,7 +1034,7 @@ class AppWindow:
             return
 
         image_num = self._annotation_scene.image_num
-        json_6d_path = os.path.join(self.scenes.scenes_path, f"{self._annotation_scene.scene_num:06}", 'scene_gt')
+        json_6d_path = os.path.join(self.scenes.scenes_path, f"{self._annotation_scene.scene_num:06}", 'scene_gt.json')
 
         if os.path.exists(json_6d_path):
             with open(json_6d_path, "r") as gt_scene:
