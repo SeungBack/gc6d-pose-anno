@@ -4,7 +4,9 @@
 
 ## Overview
 
-This repository contains annotation toolkit for the paper "**GraspClutter6D: A Large-scale Real-world Dataset for Robust Perception and Grasping in Cluttered Scenes**." (RA-L 2025) [[ArXiv]](https://arxiv.org/abs/2504.06866) [[Website]](https://sites.google.com/view/graspclutter6d) [[Dataset]](https://huggingface.co/datasets/GraspClutter6D/GraspClutter6D)
+This repository contains annotation toolkit for the paper "**GraspClutter6D: A Large-scale Real-world Dataset for Robust Perception and Grasping in Cluttered Scenes**." (RA-L 2025)
+
+[[ArXiv]](https://arxiv.org/abs/2504.06866) [[Website]](https://sites.google.com/view/graspclutter6d) [[Video]](https://youtu.be/NkKkfVS5wZ4) [[Dataset]](https://huggingface.co/datasets/GraspClutter6D/GraspClutter6D)
 
 The GraspClutter6D Pose Annotator is a specialized tool designed for:
 - Annotating 6D object poses in datasets that follow the BOP format
@@ -89,3 +91,4 @@ You can copy object poses across different images within the same scene:
 - After saving, segmentation masks and annotation quality metrics are automatically updated
 
 - The `Annotation Quality` panel displays absolute depth differences in millimeters, allowing you to monitor the precision of your annotations
+
